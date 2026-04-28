@@ -102,16 +102,19 @@ function drawCenteredPortrait(context, imageBitmap, canvasWidth, canvasHeight) {
   const { canvas: sourceCanvas, context: sourceContext } = createSourceCanvas(imageBitmap);
   const bounds = getOpaqueBounds(sourceContext, sourceCanvas.width, sourceCanvas.height);
 
-  // 人像高度控制在照片高度约 73%，头顶留白约 10%。
-  const targetHeightByRule = canvasHeight * 0.73;
+  // 证件照主体应该从头顶少量留白开始，肩膀自然压到画面下方，而不是悬在中间。
+  const topPadding = canvasHeight * 0.08;
+  const bottomOverflow = canvasHeight * 0.01;
+  const bottomPadding = -bottomOverflow;
+  const targetHeightByRule = canvasHeight - topPadding - bottomPadding;
   const scaleByHeight = targetHeightByRule / bounds.height;
-  const maxPortraitWidth = canvasWidth * 0.92;
-  const scaleByWidth = maxPortraitWidth / bounds.width;
-  const scale = Math.min(scaleByHeight, scaleByWidth);
+  const minPortraitWidth = canvasWidth * 1.08;
+  const scaleByWidth = minPortraitWidth / bounds.width;
+  const scale = Math.max(scaleByHeight, scaleByWidth);
   const targetWidth = bounds.width * scale;
   const targetHeight = bounds.height * scale;
   const targetX = (canvasWidth - targetWidth) / 2;
-  const targetY = canvasHeight * 0.1;
+  const targetY = topPadding;
 
   context.imageSmoothingEnabled = true;
   context.imageSmoothingQuality = 'high';
