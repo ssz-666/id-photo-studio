@@ -144,11 +144,17 @@ export function renderComposedPhotoToCanvas(canvas, imageBitmap, size, color, sc
   drawCenteredPortrait(context, imageBitmap, canvasWidth, canvasHeight);
 }
 
-export async function createComposedPhotoBlob(imageBitmap, size, color) {
+export function createComposedPhotoCanvas(imageBitmap, size, color) {
   const canvas = document.createElement('canvas');
 
-  // 导出使用完整像素尺寸，保证下载图片清晰度。
+  // 导出或压缩都基于完整像素尺寸的离屏 Canvas 进行。
   renderComposedPhotoToCanvas(canvas, imageBitmap, size, color, 1);
+
+  return canvas;
+}
+
+export async function createComposedPhotoBlob(imageBitmap, size, color, quality = 0.95) {
+  const canvas = createComposedPhotoCanvas(imageBitmap, size, color);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
@@ -161,7 +167,7 @@ export async function createComposedPhotoBlob(imageBitmap, size, color) {
         reject(new Error('照片导出失败'));
       },
       'image/jpeg',
-      0.95,
+      quality,
     );
   });
 }

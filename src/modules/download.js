@@ -1,11 +1,25 @@
-export function createDownloadFileName(size, color) {
+export function createDownloadFileName(size, color, suffix = '') {
   const timestamp = new Date()
     .toISOString()
     .replaceAll('-', '')
     .replaceAll(':', '')
     .replace(/\.\d+Z$/, '');
 
-  return `证件照_${size.label}_${color.label}_${timestamp}.jpg`;
+  const suffixText = suffix ? `_${suffix}` : '';
+
+  return `证件照_${size.label}_${color.label}${suffixText}_${timestamp}.jpg`;
+}
+
+export function createOriginalCompressedFileName(originalFileName = '原图', suffix = '') {
+  const timestamp = new Date()
+    .toISOString()
+    .replaceAll('-', '')
+    .replaceAll(':', '')
+    .replace(/\.\d+Z$/, '');
+  const baseName = originalFileName.replace(/\.[^.]+$/, '');
+  const suffixText = suffix ? `_${suffix}` : '';
+
+  return `${baseName}${suffixText}_${timestamp}.jpg`;
 }
 
 export function downloadBlob(blob, fileName) {
